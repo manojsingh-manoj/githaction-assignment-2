@@ -68,10 +68,12 @@ jobs:
           key: ${{ secrets.VM_SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            docker login ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }} 
             docker pull ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/simple-node-app:v${{ github.run_number }}
             docker stop simple-node-app || true
             docker rm simple-node-app || true
             docker run -d --name simple-node-app -p 3000:3000 -e VERSION=${{github.run_number}} -e APPINSIGHTS_INSTRUMENTATIONKEY=${{secrets.APPINSIGHTS_INSTRUMENTATIONKEY}} ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/simple-node-app:v${{ github.run_number }}
+            docker logout ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io
       
       # Wait of 2 min
       - name: Wait for 2 minutes
@@ -163,6 +165,8 @@ jobs:
           port: 22
           script: |
             deployment_version=$(( ${{ github.run_number }} - 1 ))
+            docker login ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }} 
             docker stop simple-node-app || true
             docker rm simple-node-app || true
             docker run -d --name simple-node-app -p 3000:3000 -e VERSION=$deployment_version -e APPINSIGHTS_INSTRUMENTATIONKEY=${{secrets.APPINSIGHTS_INSTRUMENTATIONKEY}} ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/simple-node-app:v$deployment_version
+            docker logout ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io
