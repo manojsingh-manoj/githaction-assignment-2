@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+Dockerfile
+.git
+.gitignore
+.github
+*.md
+.env
+*.pem
+*.key
+*.cert
+secrets
