@@ -116,7 +116,7 @@ jobs:
           else
             echo "No rows found for current version"
             COUNT_CURRENT=0
-            VERSION_CURRENT=""
+            VERSION_CURRENT=-1
           fi
 
           if [ "$ROWS_LENGTH" -gt 1 ]; then
@@ -126,7 +126,7 @@ jobs:
           else
             echo "Only one or no rows present, skipping previous version"
             COUNT_PREVIOUS=0
-            VERSION_PREVIOUS=""
+            VERSION_PREVIOUS=-1
           fi
 
           SHOULD_ROLLBACK=false
