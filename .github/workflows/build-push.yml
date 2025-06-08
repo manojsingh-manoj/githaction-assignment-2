@@ -75,6 +75,13 @@ jobs:
             docker run -d --name simple-node-app -p 3000:3000 -e VERSION=${{github.run_number}} -e APPINSIGHTS_INSTRUMENTATIONKEY=${{secrets.APPINSIGHTS_INSTRUMENTATIONKEY}} ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/simple-node-app:v${{ github.run_number }}
             docker logout ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io
       
+      # Wait of 2 min
+      - name: Wait for 2 minutes
+        run: |
+          echo "Waiting for 2 minutes before proceeding..."
+          sleep 120
+          echo "Resuming execution."
+
       # Query Application Insights for ErrorEvent counts
       - name: Query Application Insights for ErrorEvent counts
         id: query_errors
@@ -99,10 +106,6 @@ jobs:
             --output json)
           echo "results"
           echo "$RESULT"
-          
-          echo "Waiting for 2 minutes before proceeding..."
-          sleep 120
-          echo "Resuming execution."
           
           ROWS_LENGTH=$(echo "$RESULT" | jq '.tables[0].rows | length')
 
@@ -142,7 +145,7 @@ jobs:
               echo "version_previous=$VERSION_PREVIOUS" >> $GITHUB_OUTPUT
               echo "should_rollback=$SHOULD_ROLLBACK" >> $GITHUB_OUTPUT          
           fi
-    
+          
       - name: Rollback deployment
         if: ${{ steps.query_errors.outputs.should_rollback == 'true' }}
         run: |
