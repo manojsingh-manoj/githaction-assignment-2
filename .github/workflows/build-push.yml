@@ -101,7 +101,7 @@ jobs:
               | where name == 'ErrorEvent'
               | where timestamp > ago(1d)
               | summarize errorCount = count() by version = tostring(customDimensions.version)
-              | order by version desc
+              | order by toint(version) desc
               | take 2" \
             --output json)
           echo "results"
